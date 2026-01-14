@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformación Digital con IA | Matías Benni</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000000;
+            --accent: #0066FF;
+            --bg: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text: #1A1A1A;
+            --text-light: #6C757D;
+            --border: #DEE2E6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .container-narrow {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            animation: slideDown 0.6s ease-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+        }
+
+        .logo {
+            height: 48px;
+            width: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.25);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.06) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(-50px, 50px);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 5.5vw, 64px);
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero p {
+            font-size: clamp(17px, 2.2vw, 20px);
+            color: var(--text-light);
+            max-width: 680px;
+            margin: 0 auto 40px;
+            line-height: 1.65;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .cta-primary {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 18px 48px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--primary);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+            letter-spacing: -0.01em;
+        }
+
+        .cta-primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 102, 255, 0.3);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 90px 0;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(30px, 4.5vw, 48px);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-size: clamp(16px, 1.8vw, 18px);
+            color: var(--text-light);
+            line-height: 1.65;
+            max-width: 680px;
+        }
+
+        /* Problem Section */
+        .problem {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .problem-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .problem-item {
+            background: white;
+            padding: 32px 36px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .problem-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.12);
+        }
+
+        .problem-item p {
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        /* Solution Section */
+        .solution {
+            text-align: center;
+            background: white;
+        }
+
+        .solution-content {
+            background: linear-gradient(135deg, #1A1A1A 0%, #000000 100%);
+            color: white;
+            padding: 72px 56px;
+            border-radius: 16px;
+            margin-top: 48px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .solution-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.12) 0%, transparent 70%);
+        }
+
+        .solution-content h3 {
+            font-size: clamp(26px, 3.5vw, 36px);
+            margin-bottom: 20px;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .solution-content p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 660px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Services Section */
+        .services {
+            background: var(--bg-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 56px;
+        }
+
+        .service-card {
+            padding: 36px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.12);
+        }
+
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .service-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Process Section */
+        .process {
+            background: white;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 36px;
+            margin-top: 56px;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 68px;
+            height: 68px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            margin: 0 auto 20px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .process-step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .process-step p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* About Section */
+        .about {
+            background: var(--bg-secondary);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-top: 48px;
+            max-width: 860px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .about-text p {
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .about-text p:last-child {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            background: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 56px;
+        }
+
+        .benefit-card {
+            background: var(--bg-secondary);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.1);
+        }
+
+        .benefit-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .benefit-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* CTA Final Section */
+        .cta-final {
+            background: linear-gradient(135deg, #1A1A1A 0%, #000000 100%);
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-final::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 70%);
+        }
+
+        .cta-final h2 {
+            font-size: clamp(32px, 4.5vw, 50px);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .cta-final p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 660px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .cta-secondary {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 16px 40px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid white;
+            letter-spacing: -0.01em;
+        }
+
+        .cta-secondary:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 102, 255, 0.35);
+        }
+
+        .cta-tertiary {
+            display: inline-block;
+            background: transparent;
+            color: white;
+            padding: 16px 40px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid white;
+            letter-spacing: -0.01em;
+        }
+
+        .cta-tertiary:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            background: #0A0A0A;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 48px 0;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .social-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .social-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 140px 0 80px;
+            }
+
+            section {
+                padding: 70px 0;
+            }
+
+            .solution-content {
+                padding: 52px 28px;
+            }
+
+            .services-grid,
+            .process-steps,
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-primary,
+            .cta-secondary,
+            .cta-tertiary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo"><img src="data:image/webp;base64,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" alt="M Digital"></div>
+            <a href="#contacto" class="nav-cta">Contactar</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container-narrow">
+            <h1>Convertí tu negocio en una máquina de resultados con IA y automatización</h1>
+            <p>Dejá de perder tiempo en tareas manuales. Implemento inteligencia artificial y sistemas automatizados que venden, atienden clientes y optimizan procesos mientras vos te enfocás en crecer.</p>
+            <a href="#contacto" class="cta-primary">Optimizar mi negocio ahora</a>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem">
+        <div class="container-narrow">
+            <span class="section-tag">El Problema</span>
+            <h2 class="section-title">Tu negocio tiene potencial, pero está frenado</h2>
+            <div class="problem-grid">
+                <div class="problem-item fade-in">
+                    <p>Perdés tiempo respondiendo lo mismo mil veces. Tus procesos son manuales y caóticos. Las ventas no crecen al ritmo que necesitás.</p>
+                </div>
+                <div class="problem-item fade-in">
+                    <p>Y mientras tanto, la competencia ya está usando IA para dejarte atrás.</p>
+                </div>
+                <div class="problem-item fade-in">
+                    <p><strong>El problema no es tu producto. Es tu sistema.</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution">
+        <div class="container-narrow">
+            <span class="section-tag">La Solución</span>
+            <h2 class="section-title">Inteligencia artificial que transforma tu negocio</h2>
+            <div class="solution-content fade-in">
+                <h3>Sistemas que trabajan 24/7 por vos</h3>
+                <p>Implemento sistemas que atienden clientes, califican leads, automatizan ventas y ejecutan tareas repetitivas sin errores. Tu equipo se libera, tus costos bajan y tus resultados se multiplican.</p>
+                <p style="margin-top: 20px; font-weight: 600; color: white;">No es magia. Es estrategia ejecutada con tecnología.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <span class="section-tag">Servicios</span>
+                <h2 class="section-title">Qué hago</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">AI</div>
+                    <h3>Automatización de ventas y atención</h3>
+                    <p>IA que conversa, califica y convierte prospectos en clientes sin intervención humana.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Integración de IA en procesos</h3>
+                    <p>Sistemas inteligentes que reemplazan tareas manuales y optimizan operaciones.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">↗</div>
+                    <h3>Embudos automatizados</h3>
+                    <p>Secuencias de venta que nutren y convierten leads mientras dormís.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">◉</div>
+                    <h3>Desarrollo web estratégico</h3>
+                    <p>Landing pages y ecommerce diseñados para vender, no solo para existir.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">◈</div>
+                    <h3>Publicidad digital optimizada</h3>
+                    <p>Campañas monitoreadas y ajustadas con datos reales para maximizar retorno.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">⬡</div>
+                    <h3>Hosting y gestión técnica</h3>
+                    <p>Infraestructura profesional sin dolores de cabeza ni caídas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process">
+        <div class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <span class="section-tag">Metodología</span>
+                <h2 class="section-title">Cómo funciona</h2>
+            </div>
+            <div class="process-steps">
+                <div class="process-step fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Diagnóstico</h3>
+                    <p>Analizamos tu negocio, identificamos cuellos de botella y oportunidades de optimización.</p>
+                </div>
+                <div class="process-step fade-in">
+                    <div class="step-number">2</div>
+                    <h3>Estrategia</h3>
+                    <p>Diseñamos el sistema de automatización e IA personalizado para tus objetivos.</p>
+                </div>
+                <div class="process-step fade-in">
+                    <div class="step-number">3</div>
+                    <h3>Implementación</h3>
+                    <p>Integramos las herramientas, configuramos los procesos y ponemos todo en marcha.</p>
+                </div>
+                <div class="process-step fade-in">
+                    <div class="step-number">4</div>
+                    <h3>Optimización continua</h3>
+                    <p>Medimos, ajustamos y mejoramos resultados en base a datos reales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <span class="section-tag">Quién Soy</span>
+                <h2 class="section-title">Estratega de transformación digital</h2>
+            </div>
+            <div class="about-content fade-in">
+                <div class="about-text">
+                    <p>Administrador de Empresas especializado en transformación digital.</p>
+                    <p>No soy un técnico que implementa herramientas. Soy un estratega de negocios que usa IA, automatización y marketing digital para resolver problemas reales: escalabilidad, eficiencia, crecimiento.</p>
+                    <p>Trabajé con emprendedores y pymes que necesitaban dejar de trabajar "en" el negocio para empezar a trabajar "sobre" el negocio. Mi enfoque combina visión estratégica con ejecución técnica impecable.</p>
+                    <p>Si buscás parches, hay miles de opciones. Si buscás resultados sostenibles, hablemos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <span class="section-tag">Beneficios</span>
+                <h2 class="section-title">Lo que vas a lograr</h2>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card fade-in">
+                    <h3>Ahorrás tiempo real</h3>
+                    <p>Eliminás tareas repetitivas y recuperás horas cada semana.</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <h3>Vendés mientras dormís</h3>
+                    <p>Sistemas automatizados que captan, nutren y convierten leads 24/7.</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <h3>Escalás sin colapsar</h3>
+                    <p>Tu operación crece sin necesidad de contratar más personal.</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <h3>Tomás decisiones con datos</h3>
+                    <p>Información clara y accionable para optimizar cada área del negocio.</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <h3>Mejorás la experiencia del cliente</h3>
+                    <p>Respuestas instantáneas, procesos fluidos y atención personalizada a escala.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final Section -->
+    <section class="cta-final" id="contacto">
+        <div class="container-narrow">
+            <h2>Transformá tu negocio con IA y automatización</h2>
+            <p>Agendá una llamada estratégica de 30 minutos. Sin compromiso. Analizamos tu situación actual y diseñamos un plan claro para llevar tu negocio al siguiente nivel.</p>
+            <div class="cta-buttons">
+                <a href="#" class="cta-secondary">Agendar llamada estratégica</a>
+                <a href="https://wa.me/+5493874060702" class="cta-tertiary" target="_blank">Contactar por WhatsApp</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://www.instagram.com/bennimatias/" target="_blank">Instagram</a>
+                <a href="https://www.linkedin.com/in/https://www.linkedin.com/in/bennimatias/" target="_blank">LinkedIn</a>
+            </div>
+            <p>© 2025 Matías Benni. Transformación Digital con IA.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
