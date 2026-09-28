@@ -1,9 +1,10 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
+      "src": "^/$",
       "has": [{ "type": "host", "value": "gema.mdigital.net.ar" }],
-      "destination": "/gema/index.html"
-    }
+      "dest": "/gema/index.html"
+    },
+    { "handle": "filesystem" }
   ]
 }
